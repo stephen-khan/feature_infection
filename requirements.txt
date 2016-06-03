@@ -1,1 +1,7 @@
+astroid==1.4.5
+colorama==0.3.7
 distribute==0.6.31
+lazy-object-proxy==1.2.2
+pylint==1.5.5
+six==1.10.0
+wrapt==1.10.8
