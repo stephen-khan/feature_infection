@@ -1,0 +1,3 @@
+[MESSAGES CONTROL]
+#W0141 Bad Builtin
+disable=W0141
