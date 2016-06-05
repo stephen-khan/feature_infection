@@ -1,0 +1,11 @@
+"""
+Subset Sum
+"""
+
+def greedy(S,t, key = None):
+    sum = 0
+    S = sorted(S, key=key, reverse = True)
+    for x in S:
+        if sum + x <= t:
+            sum += x
+    return sum

@@ -1,4 +1,5 @@
-import infection
+from .context import infection
+
 User = infection.User
 
 class TestTotalInfection:
@@ -41,7 +42,9 @@ class TestTotalInfection:
         users[1].connections.append(users[2])
         users[2].connections.append(users[0])
         assert sorted(infection.total_infection(users, users[0])) == sorted(users)
-        
-def test_limited_infection():
-    infection.limited_infection()
-    assert True
+
+class TestLimitdInfection:
+    def test_limited_infection(self):
+        users = [User(), User(), User()]
+        users[1].connections.append(users[2])
+        assert infection.limited_infection(users, 1) == [set([users[0]])]
