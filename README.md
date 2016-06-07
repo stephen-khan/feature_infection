@@ -45,7 +45,7 @@ pylint feature_infection
 
 ## Release History
 * 1.0.0
-    * Submission for consideration for a Software Engineer position
+    * Submission for consideration for a Software Engineer position at Khan Academy.
 
 ## Meta
 
