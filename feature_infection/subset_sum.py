@@ -18,7 +18,9 @@ import operator
 import inspect
 import logging
 
-_log = logging.getLogger(__name__)
+
+_LOG = logging.getLogger(__name__)
+
 
 def _takeuntil(predicate, iterable):
     # takeuntil(lambda x: x<5, [1,4,6,4,1]) --> 1 4 5
@@ -222,8 +224,8 @@ def optimize(seq, target, algo="greedy", error=.5, key=None):
         >>> optimize([1,2,3], 5)
         (5, [2,3])
 
-        >>> optimize([{"x": 1}, {"x": 2}, {"x": 3}], 5, algo="exact",
-        >>>     key=operator.itemgetter("x"))
+        >>> optimize([{"x": 1}, {"x": 2}, {"x": 3}], 5, algo="exact",\
+key=operator.itemgetter("x"))
         (5, [{"x": 2}, {"x": 3}])
     """
     if algo not in _ALGORITHM_DEFINITIONS:
