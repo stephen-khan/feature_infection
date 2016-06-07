@@ -7,6 +7,7 @@ This project was created in response to a Khan Academy project-based interview p
 
 `Feature Infection` is a python library that provides the ability to apply tags across a graph of users.  The library is non-invasive, and does not require a change to existing domain models.  `Feature Infection` is designed to be used by A/B testing or Feature Choosing frameworks. 
 
+See [this justification)(./docs/subset_sum.md)
 
 ## Installation
 

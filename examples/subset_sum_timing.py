@@ -49,14 +49,14 @@ def trial(algo, test_data):
 def get_report_data():
     active_algos = set(subset_sum.ALGORITHMS)
     sample_size = 100
-    overtime = 10
+    overtime = 2
     metadata = defaultdict(list)
     timings = defaultdict(list)
     results = defaultdict(list)
 
     while active_algos:
         metadata["sample_size"].append(sample_size)
-        test_data = create_test_data(sample_size, 10, .2)
+        test_data = create_test_data(sample_size, 1000, .2)
         metadata["target"].append(test_data.target)
         algos_overtime = set()
         for algo in active_algos:
