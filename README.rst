@@ -19,9 +19,9 @@ python setup.py install
 Basic usage is to create a feature, apply it to some subset of the users, then later test to see if a user has the feature
 
 ```python
-feature = feature_infection.cdc.get_infection("my-feature")
-feature.limited_infection(users, percent=1)
-assert feature.is_infected(user)
+feature = feature_infection.CDC.get_infection("my-feature")
+feature.limited_infection(users, len(users))
+assert all(feature.is_infected(user) for user in users)
 ```
 
 ## Development setup
@@ -50,4 +50,3 @@ pylint infection
 
 Distributed under the unlicense. See ``LICENSE`` for more information.
 
-[https://github.com/yourname/github-link](https://github.com/dbader/)
