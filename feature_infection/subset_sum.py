@@ -1,10 +1,24 @@
 """
-Subset Sum
+Library for solving the subset sum optimization problem
+
+This library has algorithms for solving the subset sum problem.
+These include exact and approximation algorithms.
+
+The subset sum optimation problem asks to find a subset with
+the maximal sum that is no larger than a supplied target.  The
+exact solution is NP-Complete so we default to a greedy algorithm
+that is fast and works well in practice.
+
+Exports:
+    ALGORITHMS: list of implemented algorithms
+    optimize: uses the algorithms to solve the subset sum problem
 """
 from collections import namedtuple
 import operator
 import inspect
+import logging
 
+_log = logging.getLogger(__name__)
 
 def _takeuntil(predicate, iterable):
     # takeuntil(lambda x: x<5, [1,4,6,4,1]) --> 1 4 5
@@ -111,7 +125,6 @@ def _psudopolynomial(seq, target, key=None):
     subset = []
     total = _get_partial(*current).sum
     while _get_partial(*current).last_used:
-        print current, "=>", _get_partial(*current).last_used
         # check the weight component of the last pointer
         if current[1] != _get_partial(*current).last_used[1]:
             subset.append(seq[current[0] - 1])
@@ -174,7 +187,45 @@ def _invoke_algorithm(algo, seq, target, error, key):
 
 
 def optimize(seq, target, algo="greedy", error=.5, key=None):
-    """Solve the subset sum optimization problem"""
+    """Find a subset with the maximal sum bounded by target
+
+    Solves the subset sum problem, either exactly or with an
+    approximation algorithm.  The solver can use any of the
+    algorithms in the subset sum package, but defaults to a
+    greedy heuristic algorithm.  This default runs in O(n * log(n))
+    time.
+
+    Args:
+        seq (list):  list of elements to optimize using the
+            value or keyed value as the weight
+        target (int): the limit of the returned subset sum
+        algo (string): name of the algorithm to use. Defaults
+            to greedy
+        (optional) error (float): limits the error when searching for
+            and approximate solution.  Only applicable to
+            tunable approximation algorithms (like approximate).
+            Defaults to .5
+        (optional)key (function obj -> int): get weight of list
+            item when present.  Otherwise, use the item itself.
+            Defaults to None
+
+    Returns:
+        sum (int) * subset (list): returns a subset of the original
+            items as a list.  Also provides the sum of the value of
+            each of those items
+
+    Raises:
+        ValueError: algorithm is not one defined in ALGORITHMS package
+            variable
+
+    Exampes:
+        >>> optimize([1,2,3], 5)
+        (5, [2,3])
+
+        >>> optimize([{"x": 1}, {"x": 2}, {"x": 3}], 5, algo="exact",
+        >>>     key=operator.itemgetter("x"))
+        (5, [{"x": 2}, {"x": 3}])
+    """
     if algo not in _ALGORITHM_DEFINITIONS:
         raise ValueError("{} is not a valid algorithm selection.".format(algo))
     impl = _ALGORITHM_DEFINITIONS[algo]
