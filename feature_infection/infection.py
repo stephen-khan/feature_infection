@@ -16,16 +16,6 @@ import networkx as nx
 from . import subset_sum as ss
 
 
-def _generate_connection_graph(users):
-    """Convert a list of users into a graph using coaching relationships as the edges"""
-    user_graph = nx.Graph()
-    for user in users:
-        user_graph.add_node(user)
-        for coached_student in user.connections:
-            user_graph.add_edge(user, coached_student)
-    return user_graph
-
-
 class Infector(object):
     """Feature"""
 
@@ -36,7 +26,7 @@ class Infector(object):
 
     @staticmethod
     def _generate_graph(infectables, connections=iter):
-        """Convert a list of users into a graph using coaching relationships as the edges"""
+        """Convert a list of infectables into a graph via connections"""
         if isinstance(infectables, nx.Graph):
             return infectables
 
@@ -47,12 +37,14 @@ class Infector(object):
                 infectables_graph.add_edge(infectable, connected_infectable)
         return infectables_graph
 
-    def _get_total_infection_plan(self, infectables, initial_infected):
-        """Create a plan for infecting all user connected to an initial infectable"""
+    @staticmethod
+    def _get_total_infection_plan(infectables, initial_infected):
+        """Plan for infecting everything connected to an initial infectable"""
         connected = nx.node_connected_component(infectables, initial_infected)
         return connected
 
-    def _get_limited_infection_plan(self, infectables, target_size):
+    @staticmethod
+    def _get_limited_infection_plan(infectables, target_size):
         groups = [(len(group), group)
                   for group in nx.connected_components(infectables)]
         get_count = itemgetter(0)
@@ -60,10 +52,10 @@ class Infector(object):
         _, infection_groups = ss.optimize(groups, target_size, key=get_count)
         infected = map(get_users, infection_groups)
         infection_plan = set.union(*infected) if infected else set()
-        print infection_plan
         return infection_plan
 
-    def total_infection(self, infectables_seq, initial_infected, connections=None):
+    def total_infection(self, infectables_seq, initial_infected,
+                        connections=None):
         """Create an infection of all users connected to the target user"""
         if not infectables_seq:
             return set()
@@ -73,7 +65,8 @@ class Infector(object):
         self.control.infect(self, *plan)
         return plan
 
-    def limited_infection(self, infectables_seq, target_size, connections=None):
+    def limited_infection(self, infectables_seq, target_size,
+                          connections=None):
         """Create an infection that is bounded by the target size"""
         if not infectables_seq:
             return set()
@@ -105,6 +98,7 @@ class InfectionControl(object):
         return self.infectors.setdefault(name, Infector(self, name))
 
     def infect(self, infector, *infectables):
+        """Infect all provided infectables with the given feature."""
         infection_tag = self._get_tag(infector)
         for infectable in infectables:
             self.infections[infectable].append(infection_tag)

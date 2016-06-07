@@ -1,6 +1,7 @@
 """
 Subset Sum
 """
+from collections import namedtuple
 import operator
 import inspect
 
@@ -71,35 +72,50 @@ def _approximation(seq, target, error, key=None):
     return _accumulate_partials(seq, trim, key=key)
 
 
-def _exact_psudopolynomial(seq, target, key=None):
+def _psudopolynomial(seq, target, key=None):
     """Perform an exact search for a subset satisfying the subset sum
     optimization problem.  This function executes in O(len(seq) * target) time
     """
-    partial_sums = [[(0, None)] * (target + 1) for _ in xrange(len(seq) + 1)]
-    for j in xrange(1, len(seq) + 1):
-        val = key(seq[j - 1]) if key else seq[j - 1]
+    # Create a dynamic programming matrix.  The format of each cell is a tuple
+    # of maximum weight so far, and a pointer to the previous entry used.
+    #pylint: disable=invalid-name
+    PartialSum = namedtuple("PartialSum", ["sum", "last_used"])
+    partial_sums = [[PartialSum(0, None)] * (target + 1)
+                    for _ in xrange(len(seq) + 1)]
+
+    def _get_partial(first_n, max_weight):
+        return partial_sums[first_n][max_weight]
+
+    def _use_previous(first_n, max_weight, val):
+        previous = (first_n - 1, max_weight - val)
+        return PartialSum(val + _get_partial(*previous).sum, previous)
+
+    # Fill in values for the maximal partial sums using the first n elements
+    # up to the given weight remaining
+    for first_n in xrange(1, len(seq) + 1):
+        val = key(seq[first_n - 1]) if key else seq[first_n - 1]
         for weight_left in xrange(0, target + 1):
             if val > weight_left:
-                partial_sums[j][weight_left] = (partial_sums[j - 1][weight_left][0], (j - 1, weight_left))
+                partial_sums[first_n][weight_left] = _use_previous(
+                    first_n, weight_left, 0)
                 continue
-            partial_sums[j][weight_left] = max([
-                (partial_sums[j - 1][weight_left][0], (j - 1, weight_left)),
-                (val + partial_sums[j - 1][weight_left - val][0], (j - 1, weight_left - val))
+            partial_sums[first_n][weight_left] = max([
+                _use_previous(first_n, weight_left, 0),
+                _use_previous(first_n, weight_left, val)
             ], key=operator.itemgetter(0))
 
-    def _get_partial(node):
-        return partial_sums[node[0]][node[1]]
-
+    # Use the previous pointers to walk back the matrix to determine which
+    # elements were added to get the maximal sum.  We select by changes in
+    # the sum.
     current = (len(seq), target)
     subset = []
-    total = _get_partial(current)[0]
-    #print "Extracting subset"
-    while _get_partial(current)[1]:
-        #print current, "=>", _get_partial(current)[1]
-        if current[1] != _get_partial(current)[1][1]:
-            #print "Adding item", current[0], "val:", seq[current[0] - 1]
+    total = _get_partial(*current).sum
+    while _get_partial(*current).last_used:
+        print current, "=>", _get_partial(*current).last_used
+        # check the weight component of the last pointer
+        if current[1] != _get_partial(*current).last_used[1]:
             subset.append(seq[current[0] - 1])
-        current = _get_partial(current)[1]
+        current = _get_partial(*current).last_used
     return (total, subset)
 
 
@@ -139,7 +155,7 @@ def _iterated_greedy(seq, target, key=None):
 
 _ALGORITHM_DEFINITIONS = {
     "exact": _exact,
-    "psudopolynomial": _exact_psudopolynomial,
+    "psudopolynomial": _psudopolynomial,
     "approximation": _approximation,
     "greedy": _greedy,
     "iterated_greedy": _iterated_greedy
@@ -149,12 +165,18 @@ _ALGORITHM_DEFINITIONS = {
 ALGORITHMS = _ALGORITHM_DEFINITIONS.keys()
 
 
+def _invoke_algorithm(algo, seq, target, error, key):
+    kwargs = {'key': key}
+    # Approximation algorithms require an error parameter.  Add if required.
+    if "error" in inspect.getargspec(algo).args:
+        kwargs['error'] = error
+    return algo(seq, target, **kwargs)
+
+
 def optimize(seq, target, algo="greedy", error=.5, key=None):
     """Solve the subset sum optimization problem"""
     if algo not in _ALGORITHM_DEFINITIONS:
         raise ValueError("{} is not a valid algorithm selection.".format(algo))
     impl = _ALGORITHM_DEFINITIONS[algo]
-    kwargs = {"key": key}
-    if "error" in inspect.getargspec(impl).args:
-        kwargs["error"] = error
-    return impl(seq, target, **kwargs)
+    return _invoke_algorithm(impl, seq, target, error, key)
+
