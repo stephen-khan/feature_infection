@@ -1,5 +1,5 @@
 #Feature Infection
-> Assign new features to your users while maintaining the same features for users that need to collaborate.  
+> Assign new features to groups of your users while making sure that collaborators are working with the same features.
 
 ## Introduction
 
