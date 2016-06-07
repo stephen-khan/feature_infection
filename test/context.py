@@ -1,8 +1,8 @@
-"""Infection module for managing user context"""
+"""Test context"""
 
 import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
 
-import infection
-from infection import subset_sum
+import feature_infection
+from feature_infection import subset_sum

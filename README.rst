@@ -1,9 +1,53 @@
-Khan Academy Project
+#Feature Infection
+> Assign new features to your users while maintaining the same features for users that need to collaborate.  
 
-"Infection"
+## Introduction
 
-Create the following:
+This project was created in response to a Khan Academy project-based interview project.  Khan Academy progressively releases new versions of code but wants to ensure that users that collaborate on the site will have the same version.
 
-* total_infection which will infect the full graph from a particular user
-* limited_infection which will constrain the infection to a limited subset
-* an example demonstrating the use of the infection library (TBD)
+`Feature Infection` is a python library that provides the ability to apply tags across a graph of users.  The library is non-invasive, and does not require a change to existing domain models.  `Feature Infection` is designed to be used by A/B testing or Feature Choosing frameworks. 
+
+
+## Installation
+
+```sh
+python setup.py install
+```
+
+## Usage example
+
+Basic usage is to create a feature, apply it to some subset of the users, then later test to see if a user has the feature
+
+```python
+feature = feature_infection.cdc.get_infection("my-feature")
+feature.limited_infection(users, percent=1)
+assert feature.is_infected(user)
+```
+
+## Development setup
+
+Uses pip to package dependencies.  To install run
+```sh
+pip install -r requirements.txt
+```
+
+Tests are located in the `test` directory.  Run the automated tests from the project root using the command:
+
+```sh
+py.test
+```
+Source code standards are maintained by automated linting tools.  This project uses pylint, which is included in our pip dependencies.  (This project is also [khan-linter](https://github.com/Khan/khan-linter) clean). To run the project linter use the following command:
+
+```sh
+pylint infection
+```
+
+## Release History
+* 1.0.0
+    * Submission for consideration for a Software Engineer position
+
+## Meta
+
+Distributed under the unlicense. See ``LICENSE`` for more information.
+
+[https://github.com/yourname/github-link](https://github.com/dbader/)
