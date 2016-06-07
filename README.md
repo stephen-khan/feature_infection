@@ -17,7 +17,7 @@ python setup.py install
 
 ## Usage example
 
-Basic usage is to create a feature, apply it to some subset of the users, then later test to see if a user has the feature
+Basic usage is to create a feature, apply it to some subset of the users, then later test to see if a user has the feature.
 
 ```python
 feature = feature_infection.CDC.get_infection("my-feature")
@@ -27,7 +27,7 @@ assert all(feature.is_infected(user) for user in users)
 
 ## Development setup
 
-Uses pip to package dependencies.  To install run
+Uses pip to package dependencies.  To install run:
 ```sh
 pip install -r requirements.txt
 ```
@@ -40,7 +40,7 @@ py.test
 Source code standards are maintained by automated linting tools.  This project uses pylint, which is included in our pip dependencies.  (This project is also [khan-linter](https://github.com/Khan/khan-linter) clean). To run the project linter use the following command:
 
 ```sh
-pylint infection
+pylint feature_infection
 ```
 
 ## Release History
