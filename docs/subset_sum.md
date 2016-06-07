@@ -37,8 +37,10 @@ The greedy algorithm can have an error up to 1/2, so one fix is to rerun the alg
 
 Two sample timings are included in the examples folder.  The timings for each algorithm increase until a threshold duration is reached.
 
-[Sample 1](../examples/timing.csv)
-[Sample 2](../examples/timing_large.csv)
+*  Sample 1 
+    examples/timing.csv
+*  Sample 2 
+    examples/timing_large.csv
 
 The first sample uses sample elements of uniform size up to 10.  The second sample uses sample elements of uniform size up to 1000.  The target is set at 20% of the sum of all of the samples in both cases
 
